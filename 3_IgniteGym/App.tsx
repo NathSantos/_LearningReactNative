@@ -4,7 +4,8 @@ import {
   Roboto_700Bold,
   Roboto_400Regular,
 } from '@expo-google-fonts/roboto';
-import { GluestackUIProvider, Text } from '@gluestack-ui/themed';
+import { Center, GluestackUIProvider, Text } from '@gluestack-ui/themed';
+import { config } from './config/gluestack-ui.config';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -13,22 +14,19 @@ export default function App() {
   });
 
   return (
-    <GluestackUIProvider>
-      <View
-        style={{
-          flex: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: '#202024',
-        }}
-      >
-        <StatusBar
-          barStyle='light-content'
-          backgroundColor='transparent'
-          translucent
-        />
-        {fontsLoaded ? <Text>Home</Text> : <View />}
-      </View>
+    <GluestackUIProvider config={config}>
+      <StatusBar
+        barStyle='light-content'
+        backgroundColor='transparent'
+        translucent
+      />
+      {fontsLoaded ? (
+        <Center flex={1} bg='$green500'>
+          <Text>Home</Text>
+        </Center>
+      ) : (
+        <View />
+      )}
     </GluestackUIProvider>
   );
 }
