@@ -3,6 +3,7 @@ import { ScrollView, TouchableOpacity } from 'react-native';
 
 import { ScreenHeader } from '@components/ScreenHeader';
 import { UserPhoto } from '@components/UserPhoto';
+import { Input } from '@components/Input';
 
 export function Profile() {
   return (
@@ -28,6 +29,11 @@ export function Profile() {
               Alterar Foto
             </Text>
           </TouchableOpacity>
+
+          <Center w='$full' gap='$4'>
+            <Input placeholder='Nome' bg='$gray600' />
+            <Input value='nath@email.com' bg='$gray600' isReadOnly />
+          </Center>
         </Center>
       </ScrollView>
     </VStack>

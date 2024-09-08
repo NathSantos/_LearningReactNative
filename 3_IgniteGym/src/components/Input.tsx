@@ -1,9 +1,11 @@
 import { Input as GlueStackInput, InputField } from '@gluestack-ui/themed';
 import { ComponentProps } from 'react';
 
-type Props = ComponentProps<typeof InputField>;
+type Props = ComponentProps<typeof InputField> & {
+  isReadOnly?: boolean;
+};
 
-export function Input({ ...rest }: Props) {
+export function Input({ isReadOnly = false, ...rest }: Props) {
   return (
     <GlueStackInput
       bg='$gray700'
@@ -15,8 +17,12 @@ export function Input({ ...rest }: Props) {
         borderWidth: 1,
         borderColor: '$green500',
       }}
+      isReadOnly={isReadOnly}
+      opacity={isReadOnly ? 0.5 : 1}
     >
       <InputField
+        px='$4'
+        bg='$gray700'
         color='$white'
         fontFamily='$body'
         placeholderTextColor='$gray300'
