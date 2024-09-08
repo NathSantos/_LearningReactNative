@@ -1,4 +1,11 @@
-import { Heading, HStack, Icon, VStack, Text } from '@gluestack-ui/themed';
+import {
+  Heading,
+  HStack,
+  Icon,
+  VStack,
+  Text,
+  Image,
+} from '@gluestack-ui/themed';
 import { useNavigation } from '@react-navigation/native';
 import { ArrowLeft } from 'lucide-react-native';
 import { TouchableOpacity } from 'react-native';
@@ -41,6 +48,20 @@ export function Exercise() {
             </Text>
           </HStack>
         </HStack>
+      </VStack>
+
+      <VStack p='$8'>
+        <Image
+          source={{
+            uri: 'https://image.tuasaude.com/media/article/ll/ae/puxada-frontal_63648_l.jpg',
+          }}
+          alt='Exercício'
+          mb='$3'
+          resizeMode='cover'
+          rounded='$lg'
+          w='$full'
+          h='$80'
+        />
       </VStack>
     </VStack>
   );
