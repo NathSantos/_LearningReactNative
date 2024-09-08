@@ -1,4 +1,4 @@
-import { HStack, VStack } from '@gluestack-ui/themed';
+import { Heading, HStack, VStack, Text } from '@gluestack-ui/themed';
 import { useState } from 'react';
 import { FlatList } from 'react-native';
 
@@ -32,6 +32,17 @@ export function Home() {
         showsHorizontalScrollIndicator={false}
         style={{ marginVertical: 40, maxHeight: 44, minHeight: 44 }}
       />
+
+      <VStack px='$8'>
+        <HStack justifyContent='space-between' mb='$5' alignItems='center'>
+          <Heading color='$gray200' fontSize='$md' fontFamily='$heading'>
+            Exercícios
+          </Heading>
+          <Text color='$gray200' fontSize='$sm' fontFamily='$body'>
+            4
+          </Text>
+        </HStack>
+      </VStack>
     </VStack>
   );
 }
