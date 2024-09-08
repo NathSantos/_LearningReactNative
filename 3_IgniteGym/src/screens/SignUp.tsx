@@ -8,6 +8,8 @@ import {
 } from '@gluestack-ui/themed';
 import { useNavigation } from '@react-navigation/native';
 import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
 import BackgroundImg from '@assets/background.png';
 import Logo from '@assets/logo.svg';
@@ -21,12 +23,19 @@ type FormDataProps = {
   password_confirm: string;
 };
 
+const signUpSchema = yup.object({
+  name: yup.string().required('Informe o nome'),
+  email: yup.string().required('Informe o e-mail').email('E-mail inválido'),
+});
+
 export function SignUp() {
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormDataProps>();
+  } = useForm<FormDataProps>({
+    resolver: yupResolver(signUpSchema) as any,
+  });
 
   const navigation = useNavigation();
 
@@ -71,9 +80,6 @@ export function SignUp() {
             <Controller
               control={control}
               name='name'
-              rules={{
-                required: 'Informe o nome',
-              }}
               render={({ field: { onChange, value } }) => (
                 <Input
                   placeholder='Nome'
@@ -87,13 +93,6 @@ export function SignUp() {
             <Controller
               control={control}
               name='email'
-              rules={{
-                required: 'Informe o e-mail',
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: 'E-mail inválido',
-                },
-              }}
               render={({ field: { onChange, value } }) => (
                 <Input
                   placeholder='E-mail'
