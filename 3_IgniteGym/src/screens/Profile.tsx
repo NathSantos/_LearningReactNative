@@ -9,12 +9,18 @@ import { Button } from '@components/Button';
 
 export function Profile() {
   async function handleUserPhotoSelect() {
-    await ImagePicker.launchImageLibraryAsync({
+    const photoSelected = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 1,
       aspect: [4, 4],
       allowsEditing: true,
     });
+
+    if (photoSelected.canceled) {
+      return;
+    }
+
+    console.log(photoSelected.assets[0]);
   }
 
   return (
