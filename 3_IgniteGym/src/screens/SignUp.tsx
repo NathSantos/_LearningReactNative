@@ -30,6 +30,10 @@ const signUpSchema = yup.object({
     .string()
     .required('Informe a senha.')
     .min(6, 'A senha deve ter pelo menos seis dígitos.'),
+  password_confirm: yup
+    .string()
+    .required('Confirme a senha')
+    .oneOf([yup.ref('password'), ''], 'A confirmação da senha não confere.'),
 });
 
 export function SignUp() {
@@ -38,7 +42,7 @@ export function SignUp() {
     handleSubmit,
     formState: { errors },
   } = useForm<FormDataProps>({
-    resolver: yupResolver(signUpSchema) as any,
+    resolver: yupResolver(signUpSchema),
   });
 
   const navigation = useNavigation();
@@ -134,6 +138,7 @@ export function SignUp() {
                   value={value}
                   onSubmitEditing={handleSubmit(handleSignUp)}
                   returnKeyType='send'
+                  errorMessage={errors.password_confirm?.message}
                 />
               )}
             />
