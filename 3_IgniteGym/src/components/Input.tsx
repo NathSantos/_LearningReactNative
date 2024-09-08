@@ -10,7 +10,6 @@ export function Input({ isReadOnly = false, ...rest }: Props) {
     <GlueStackInput
       bg='$gray700'
       h='$14'
-      px='$4'
       borderWidth='$0'
       borderRadius='$md'
       $focus={{
