@@ -5,19 +5,19 @@ import {
   Text,
   Heading,
   ScrollView,
+  useToast,
 } from '@gluestack-ui/themed';
-import { Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import axios from 'axios';
 
 import { api } from '@services/api';
 import BackgroundImg from '@assets/background.png';
 import Logo from '@assets/logo.svg';
 import { Input } from '@components/Input';
 import { Button } from '@components/Button';
+import { AppError } from '@utils/AppError';
 
 type FormDataProps = {
   name: string;
@@ -49,6 +49,7 @@ export function SignUp() {
   });
 
   const navigation = useNavigation();
+  const toast = useToast();
 
   function handleGoBack() {
     navigation.goBack();
@@ -64,9 +65,22 @@ export function SignUp() {
       const response = await api.post('/users', { name, email, password });
       console.log(response.data);
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        Alert.alert(error.response?.data.message);
-      }
+      const isAppError = error instanceof AppError;
+
+      const title = isAppError
+        ? error.message
+        : 'Não foi possível criar a conta. Tente novamente mais tarde';
+
+      toast.show({
+        placement: 'top',
+        render: () => (
+          <Center bgColor='$red500' p='$4' borderRadius={8}>
+            <Text color='white' fontWeight='$bold'>
+              {title}
+            </Text>
+          </Center>
+        ),
+      });
     }
   }
 
