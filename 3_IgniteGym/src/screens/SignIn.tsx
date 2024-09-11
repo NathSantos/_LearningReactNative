@@ -14,6 +14,7 @@ import Logo from '@assets/logo.svg';
 import { Input } from '@components/Input';
 import { Button } from '@components/Button';
 import { AuthNavigatorRoutesProps } from '@routes/auth.routes';
+import { useAuth } from '@hooks/useAuth';
 
 type FormData = {
   email: string;
@@ -21,6 +22,8 @@ type FormData = {
 };
 
 export function SignIn() {
+  const { signIn } = useAuth();
+
   const navigation = useNavigation<AuthNavigatorRoutesProps>();
 
   const {
@@ -34,7 +37,7 @@ export function SignIn() {
   }
 
   function handleSignIn({ email, password }: FormData) {
-    console.log(email, password);
+    signIn(email, password);
   }
 
   return (
