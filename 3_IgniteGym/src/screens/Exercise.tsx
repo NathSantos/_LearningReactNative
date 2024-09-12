@@ -6,7 +6,10 @@ import {
   Text,
   Image,
   Box,
+  useToast,
+  Center,
 } from '@gluestack-ui/themed';
+import { useEffect, useState } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ArrowLeft } from 'lucide-react-native';
 import { TouchableOpacity, ScrollView } from 'react-native';
@@ -16,20 +19,55 @@ import BodySvg from '@assets/body.svg';
 import SeriesSvg from '@assets/series.svg';
 import RepetitionsSvg from '@assets/repetitions.svg';
 import { Button } from '@components/Button';
+import { api } from '@services/api';
+import { AppError } from '@utils/AppError';
+import { ExerciseDTO } from '@dtos/ExerciseDTO';
 
 type RouteParamsProps = {
   exerciseId: string;
 };
 
 export function Exercise() {
+  const [exercise, setExercise] = useState<ExerciseDTO>({} as ExerciseDTO);
+
   const navigation = useNavigation<AppNavigatorRoutesProps>();
   const route = useRoute();
+  const toast = useToast();
 
   const { exerciseId } = route.params as RouteParamsProps;
 
   function handleGoBack() {
     navigation.goBack();
   }
+
+  async function fetchExerciseDetails() {
+    try {
+      const response = await api.get(`/exercises/${exerciseId}`);
+      console.log(response.data);
+      setExercise(response.data);
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+      const title = isAppError
+        ? error.message
+        : 'Não foi possível carregar os detalhes do exercício';
+
+      toast.show({
+        placement: 'top',
+        render: () => (
+          <Center bgColor='$red500' p='$4' borderRadius={8}>
+            <Text color='white' fontWeight='$bold'>
+              {title}
+            </Text>
+          </Center>
+        ),
+      });
+    }
+  }
+
+  useEffect(() => {
+    fetchExerciseDetails();
+  }, [exerciseId]);
+
   return (
     <VStack flex={1}>
       <VStack px='$8' bg='$gray600' pt='$12'>
