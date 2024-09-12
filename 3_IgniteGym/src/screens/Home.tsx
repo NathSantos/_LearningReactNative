@@ -1,8 +1,17 @@
-import { Heading, HStack, VStack, Text } from '@gluestack-ui/themed';
-import { useState } from 'react';
+import {
+  Heading,
+  HStack,
+  VStack,
+  Text,
+  useToast,
+  Center,
+} from '@gluestack-ui/themed';
+import { useState, useEffect } from 'react';
 import { FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
+import { api } from '@services/api';
+import { AppError } from '@utils/AppError';
 import { AppNavigatorRoutesProps } from '@routes/app.routes';
 import { Group } from '@components/Group';
 import { HomeHeader } from '@components/HomeHeader';
@@ -17,19 +26,42 @@ export function Home() {
     'Barra Fixa',
     'Agachamento Livre',
   ]);
-  const [groups, setGroups] = useState<string[]>([
-    'Costas',
-    'Bíceps',
-    'Tríceps',
-    'Ombro',
-  ]);
+  const [groups, setGroups] = useState<string[]>([]);
   const [groupSelected, setGroupSelected] = useState<string>('Costas');
 
+  const toast = useToast();
   const navigation = useNavigation<AppNavigatorRoutesProps>();
 
   function handleOpenExerciseDetails() {
     navigation.navigate('Exercise');
   }
+
+  async function fetchGroups() {
+    try {
+      const response = await api.get('/groups');
+      setGroups(response.data);
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+      const title = isAppError
+        ? error.message
+        : 'Não foi possível carregar os grupos musculares';
+
+      toast.show({
+        placement: 'top',
+        render: () => (
+          <Center bgColor='$red500' p='$4' borderRadius={8}>
+            <Text color='white' fontWeight='$bold'>
+              {title}
+            </Text>
+          </Center>
+        ),
+      });
+    }
+  }
+
+  useEffect(() => {
+    fetchGroups();
+  }, []);
 
   return (
     <VStack flex={1}>
