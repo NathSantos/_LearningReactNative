@@ -6,9 +6,9 @@ import {
   useToast,
   Center,
 } from '@gluestack-ui/themed';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { FlatList } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 import { api } from '@services/api';
 import { AppError } from '@utils/AppError';
@@ -18,14 +18,7 @@ import { HomeHeader } from '@components/HomeHeader';
 import { ExerciseCard } from '@components/ExerciseCard';
 
 export function Home() {
-  const [exercises, setExercises] = useState<string[]>([
-    'Puxada Frontal',
-    'Remada Curvada',
-    'Remada Unilateral',
-    'Levantamento Terra',
-    'Barra Fixa',
-    'Agachamento Livre',
-  ]);
+  const [exercises, setExercises] = useState([]);
   const [groups, setGroups] = useState<string[]>([]);
   const [groupSelected, setGroupSelected] = useState<string>('Costas');
 
@@ -59,9 +52,39 @@ export function Home() {
     }
   }
 
+  async function fecthExercisesByGroup() {
+    try {
+      const response = await api.get(`/exercises/bygroup/${groupSelected}`);
+      console.log(response.data);
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+      const title = isAppError
+        ? error.message
+        : 'Não foi possível carregar os exercícios';
+
+      toast.show({
+        placement: 'top',
+        render: () => (
+          <Center bgColor='$red500' p='$4' borderRadius={8}>
+            <Text color='white' fontWeight='$bold'>
+              {title}
+            </Text>
+          </Center>
+        ),
+      });
+    }
+  }
+
   useEffect(() => {
     fetchGroups();
   }, []);
+
+  // toda vez que o grupo selecionado mudar, chama a função de buscar os exercícios
+  useFocusEffect(
+    useCallback(() => {
+      fecthExercisesByGroup();
+    }, [groupSelected])
+  );
 
   return (
     <VStack flex={1}>
