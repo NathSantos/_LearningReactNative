@@ -9,6 +9,7 @@ import {
 } from '@gluestack-ui/themed';
 import { useNavigation } from '@react-navigation/native';
 import { Controller, useForm } from 'react-hook-form';
+import { useState } from 'react';
 
 import BackgroundImg from '@assets/background.png';
 import Logo from '@assets/logo.svg';
@@ -24,9 +25,10 @@ type FormData = {
 };
 
 export function SignIn() {
+  const [isLoading, setIsLoading] = useState(false);
+
   const { signIn } = useAuth();
   const toast = useToast();
-
   const navigation = useNavigation<AuthNavigatorRoutesProps>();
 
   const {
@@ -41,6 +43,7 @@ export function SignIn() {
 
   async function handleSignIn({ email, password }: FormData) {
     try {
+      setIsLoading(true);
       await signIn(email, password);
     } catch (error) {
       const isAppError = error instanceof AppError;
@@ -59,6 +62,8 @@ export function SignIn() {
           </Center>
         ),
       });
+
+      setIsLoading(false);
     }
   }
 
@@ -114,7 +119,11 @@ export function SignIn() {
                 />
               )}
             />
-            <Button title='Acessar' onPress={handleSubmit(handleSignIn)} />
+            <Button
+              title='Acessar'
+              onPress={handleSubmit(handleSignIn)}
+              isLoading={isLoading}
+            />
           </Center>
 
           <Center flex={1} justifyContent='flex-end' mt='$4'>
