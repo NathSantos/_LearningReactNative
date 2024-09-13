@@ -31,6 +31,7 @@ type RouteParamsProps = {
 export function Exercise() {
   const [exercise, setExercise] = useState<ExerciseDTO>({} as ExerciseDTO);
   const [isLoading, setIsLoading] = useState(true);
+  const [sendingRegister, setSendingRegister] = useState(false);
 
   const navigation = useNavigation<AppNavigatorRoutesProps>();
   const route = useRoute();
@@ -68,6 +69,45 @@ export function Exercise() {
     }
   }
 
+  async function handleExerciseHistoryRegister() {
+    try {
+      setSendingRegister(true);
+
+      await api.post('/history', { exercise_id: exerciseId });
+
+      toast.show({
+        placement: 'top',
+        render: () => (
+          <Center bgColor='$green500' p='$4' borderRadius={8}>
+            <Text color='white' fontWeight='$bold'>
+              Parabéns! Exercício registrado no seu histórico.
+            </Text>
+          </Center>
+        ),
+      });
+
+      navigation.navigate('History');
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+      const title = isAppError
+        ? error.message
+        : 'Não foi possível registrar exercício.';
+
+      toast.show({
+        placement: 'top',
+        render: () => (
+          <Center bgColor='$red500' p='$4' borderRadius={8}>
+            <Text color='white' fontWeight='$bold'>
+              {title}
+            </Text>
+          </Center>
+        ),
+      });
+    } finally {
+      setSendingRegister(false);
+    }
+  }
+
   useEffect(() => {
     fetchExerciseDetails();
   }, [exerciseId]);
@@ -91,13 +131,13 @@ export function Exercise() {
             fontSize='$lg'
             flexShrink={1}
           >
-            Puxada frontal
+            {exercise.name}
           </Heading>
           <HStack alignItems='center'>
             <BodySvg />
 
             <Text color='$gray200' ml='$1' textTransform='capitalize'>
-              Costas
+              {exercise.group}
             </Text>
           </HStack>
         </HStack>
@@ -113,7 +153,7 @@ export function Exercise() {
           <VStack p='$8'>
             <Image
               source={{
-                uri: 'https://image.tuasaude.com/media/article/ll/ae/puxada-frontal_63648_l.jpg',
+                uri: `${api.defaults.baseURL}/exercise/demo/${exercise?.demo}`,
               }}
               alt='Exercício'
               mb='$3'
@@ -133,19 +173,23 @@ export function Exercise() {
                 <HStack alignItems='center'>
                   <SeriesSvg />
                   <Text color='$gray200' ml='$2'>
-                    3 séries
+                    {exercise.series} séries
                   </Text>
                 </HStack>
 
                 <HStack alignItems='center'>
                   <RepetitionsSvg />
                   <Text color='$gray200' ml='$2'>
-                    12 repetições
+                    {exercise.repetitions} repetições
                   </Text>
                 </HStack>
               </HStack>
 
-              <Button title='Marcar como realizado' />
+              <Button
+                title='Marcar como realizado'
+                isLoading={sendingRegister}
+                onPress={handleExerciseHistoryRegister}
+              />
             </Box>
           </VStack>
         </ScrollView>
